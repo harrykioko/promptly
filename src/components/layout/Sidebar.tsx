@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -75,12 +76,13 @@ const Sidebar = () => {
         )}
       >
         <button
-          className="hidden md:flex absolute top-1/2 -right-4 transform -translate-y-1/2 text-white/70 hover:text-white transition-colors"
+          className="hidden md:flex absolute top-1/2 -right-5 transform -translate-y-1/2 h-8 w-8 justify-center items-center bg-gradient text-white rounded-full shadow-lg hover:brightness-110 transition-all"
           onClick={toggleExpanded}
+          aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
         >
           {isExpanded ? 
-            <ChevronLeft className="h-5 w-5 drop-shadow-md" /> : 
-            <ChevronRight className="h-5 w-5 drop-shadow-md" />
+            <ChevronLeft className="h-5 w-5 drop-shadow-[0_0_3px_rgba(255,255,255,0.9)]" /> : 
+            <ChevronRight className="h-5 w-5 drop-shadow-[0_0_3px_rgba(255,255,255,0.9)]" />
           }
         </button>
 
