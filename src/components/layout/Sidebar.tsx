@@ -107,7 +107,7 @@ const Sidebar = () => {
             ) : (
               <Button className="w-full justify-center bg-gradient hover:shadow-lg p-2" asChild>
                 <Link to="/prompts/new" onClick={() => setIsMobileOpen(false)}>
-                  <Plus className="h-5 w-5" />
+                  <Plus className="h-4 w-4" />
                 </Link>
               </Button>
             )}
@@ -144,7 +144,6 @@ const Sidebar = () => {
                   <item.icon 
                     className={cn(
                       "h-5 w-5",
-                      !isExpanded && "h-6 w-6",
                       isActive && !isExpanded && "text-primary filter drop-shadow-[0_0_3px_rgba(139,92,246,0.5)]"
                     )} 
                     strokeWidth={isActive ? 2.5 : 2}
@@ -165,10 +164,7 @@ const Sidebar = () => {
               asChild
             >
               <Link to="/login">
-                <LogOut className={cn(
-                  "h-5 w-5",
-                  !isExpanded && "h-6 w-6"
-                )} />
+                <LogOut className="h-5 w-5" />
                 {isExpanded && <span className="ml-3">Logout</span>}
               </Link>
             </Button>
