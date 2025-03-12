@@ -126,26 +126,33 @@ const Sidebar = () => {
           )}
           
           <nav className="flex-1 space-y-1 px-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                className={cn(
-                  "flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors",
-                  !isExpanded && "justify-center",
-                  isActiveRoute(item.path)
-                    ? "bg-primary/10 text-primary"
-                    : "hover:bg-white/10 text-muted-foreground hover:text-foreground"
-                )}
-                onClick={() => setIsMobileOpen(false)}
-              >
-                <item.icon className={cn(
-                  "h-5 w-5",
-                  !isExpanded && "h-6 w-6"
-                )} />
-                {isExpanded && <span className="ml-3">{item.name}</span>}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isActive = isActiveRoute(item.path);
+              return (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={cn(
+                    "flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+                    !isExpanded && "justify-center",
+                    isActive
+                      ? "bg-primary/15 text-primary" 
+                      : "hover:bg-white/10 text-muted-foreground hover:text-foreground"
+                  )}
+                  onClick={() => setIsMobileOpen(false)}
+                >
+                  <item.icon 
+                    className={cn(
+                      "h-5 w-5",
+                      !isExpanded && "h-6 w-6",
+                      isActive && !isExpanded && "text-primary filter drop-shadow-[0_0_3px_rgba(139,92,246,0.5)]"
+                    )} 
+                    strokeWidth={isActive ? 2.5 : 2}
+                  />
+                  {isExpanded && <span className="ml-3">{item.name}</span>}
+                </Link>
+              );
+            })}
           </nav>
           
           <div className="mt-auto px-4 py-4 border-t border-white/10">
