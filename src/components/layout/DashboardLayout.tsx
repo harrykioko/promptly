@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Sidebar from './Sidebar';
-import { User, Bell, Settings } from 'lucide-react';
+import { User, Bell } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
 import GradientText from '../ui/GradientText';
@@ -13,12 +13,10 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-background">
-      {/* Sidebar */}
+    <div className="min-h-screen flex bg-background">
       <Sidebar />
       
-      {/* Main Content */}
-      <div className="flex-1">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Top Nav */}
         <header className="sticky top-0 z-30 glass border-b border-white/10 px-6 py-3 flex items-center justify-between">
           <div className="flex items-center md:hidden">
@@ -47,7 +45,7 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
         </header>
         
         {/* Page Content */}
-        <main className="p-6 md:p-8">
+        <main className="flex-1 p-6 md:p-8">
           {children}
         </main>
       </div>
