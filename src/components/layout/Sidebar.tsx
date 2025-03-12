@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -76,12 +75,12 @@ const Sidebar = () => {
         )}
       >
         <button
-          className="hidden md:flex absolute -right-3 top-6 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full p-1.5 hover:bg-white/20 transition-colors"
+          className="hidden md:flex absolute top-1/2 -right-4 transform -translate-y-1/2 text-white/70 hover:text-white transition-colors"
           onClick={toggleExpanded}
         >
           {isExpanded ? 
-            <ChevronLeft className="h-4 w-4" /> : 
-            <ChevronRight className="h-4 w-4" />
+            <ChevronLeft className="h-5 w-5 drop-shadow-md" /> : 
+            <ChevronRight className="h-5 w-5 drop-shadow-md" />
           }
         </button>
 
@@ -155,7 +154,6 @@ const Sidebar = () => {
                       strokeWidth={isActive ? 2.5 : 2}
                     />
                     
-                    {/* Enhanced visibility indicator for active items in collapsed state */}
                     {isActive && !isExpanded && (
                       <span className="absolute left-0 w-1 h-full bg-primary rounded-r-md -ml-4"></span>
                     )}
