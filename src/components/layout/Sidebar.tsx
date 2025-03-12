@@ -70,7 +70,7 @@ const Sidebar = () => {
       
       <div 
         className={cn(
-          "fixed inset-y-0 left-0 z-40 bg-white/10 backdrop-blur-xl border-r border-white/10 shadow-lg transition-all duration-300 ease-in-out md:translate-x-0 md:sticky md:top-0 md:h-screen overflow-y-auto rounded-r-2xl",
+          "fixed inset-y-0 left-0 z-40 bg-gradient-to-b from-promptly-blue/20 to-promptly-purple/20 backdrop-blur-xl border-r border-white/10 shadow-lg transition-all duration-300 ease-in-out md:translate-x-0 md:sticky md:top-0 md:h-screen overflow-y-auto rounded-r-2xl",
           isMobileOpen ? "translate-x-0" : "-translate-x-full",
           isExpanded ? "w-64" : "w-20"
         )}
@@ -91,7 +91,7 @@ const Sidebar = () => {
               {isExpanded ? (
                 <GradientText as="h1" className="text-2xl font-bold">Promptly</GradientText>
               ) : (
-                <GradientText as="h1" className="text-2xl font-bold">P</GradientText>
+                <GradientText as="h1" className="text-2xl font-bold filter drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]">P</GradientText>
               )}
             </Link>
           </div>
@@ -100,14 +100,14 @@ const Sidebar = () => {
             {isExpanded ? (
               <Button className="w-full justify-start bg-gradient hover:shadow-lg" asChild>
                 <Link to="/prompts/new" onClick={() => setIsMobileOpen(false)}>
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="h-5 w-5 mr-2" />
                   Create New
                 </Link>
               </Button>
             ) : (
               <Button className="w-full justify-center bg-gradient hover:shadow-lg p-2" asChild>
                 <Link to="/prompts/new" onClick={() => setIsMobileOpen(false)}>
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-5 w-5 filter drop-shadow-[0_0_5px_rgba(255,255,255,0.7)]" />
                 </Link>
               </Button>
             )}
@@ -128,32 +128,39 @@ const Sidebar = () => {
           <nav className="flex-1 space-y-1 px-2">
             {navItems.map((item) => {
               const isActive = isActiveRoute(item.path);
+              const Icon = item.icon;
+              
               return (
                 <Link
                   key={item.name}
                   to={item.path}
                   className={cn(
-                    "flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+                    "flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors relative",
                     !isExpanded && "justify-center",
                     isActive
-                      ? "bg-primary/15 text-primary" 
+                      ? "bg-white/15 text-primary" 
                       : "hover:bg-white/10 text-muted-foreground hover:text-foreground"
                   )}
                   onClick={() => setIsMobileOpen(false)}
                 >
-                  <item.icon 
-                    className={cn(
-                      "h-5 w-5",
-                      isActive && !isExpanded && "text-primary filter drop-shadow-[0_0_5px_rgba(139,92,246,0.8)]"
-                    )} 
-                    strokeWidth={isActive ? 2.5 : 2}
-                    style={{
-                      ...(isActive && !isExpanded ? {
-                        filter: 'drop-shadow(0 0 3px rgba(139, 92, 246, 0.7))',
-                        color: 'var(--primary)',
-                      } : {})
-                    }}
-                  />
+                  <div className={cn(
+                    "relative flex items-center justify-center",
+                    isActive && !isExpanded && "after:absolute after:inset-0 after:rounded-full after:bg-blue-500/20 after:blur-md after:z-[-1]"
+                  )}>
+                    <Icon 
+                      className={cn(
+                        "h-5 w-5",
+                        isActive && !isExpanded && "text-white filter drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]"
+                      )} 
+                      strokeWidth={isActive ? 2.5 : 2}
+                    />
+                    
+                    {/* Enhanced visibility indicator for active items in collapsed state */}
+                    {isActive && !isExpanded && (
+                      <span className="absolute left-0 w-1 h-full bg-primary rounded-r-md -ml-4"></span>
+                    )}
+                  </div>
+                  
                   {isExpanded && <span className="ml-3">{item.name}</span>}
                 </Link>
               );
@@ -170,10 +177,8 @@ const Sidebar = () => {
               asChild
             >
               <Link to="/login">
-                <LogOut className="h-5 w-5" 
-                  style={{
-                    filter: !isExpanded ? 'drop-shadow(0 0 1px rgba(255, 255, 255, 0.5))' : 'none'
-                  }}
+                <LogOut 
+                  className="h-5 w-5 filter drop-shadow-[0_0_3px_rgba(255,255,255,0.7)]" 
                 />
                 {isExpanded && <span className="ml-3">Logout</span>}
               </Link>
