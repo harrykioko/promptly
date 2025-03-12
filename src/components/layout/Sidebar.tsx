@@ -70,7 +70,7 @@ const Sidebar = () => {
       
       <div 
         className={cn(
-          "fixed inset-y-0 left-0 z-40 bg-white/5 backdrop-blur-xl border-r border-white/10 shadow-lg transition-all duration-300 ease-in-out md:translate-x-0 md:sticky md:top-0 md:h-screen overflow-y-auto rounded-r-2xl",
+          "fixed inset-y-0 left-0 z-40 bg-white/10 backdrop-blur-xl border-r border-white/10 shadow-lg transition-all duration-300 ease-in-out md:translate-x-0 md:sticky md:top-0 md:h-screen overflow-y-auto rounded-r-2xl",
           isMobileOpen ? "translate-x-0" : "-translate-x-full",
           isExpanded ? "w-64" : "w-20"
         )}
@@ -144,9 +144,15 @@ const Sidebar = () => {
                   <item.icon 
                     className={cn(
                       "h-5 w-5",
-                      isActive && !isExpanded && "text-primary filter drop-shadow-[0_0_3px_rgba(139,92,246,0.5)]"
+                      isActive && !isExpanded && "text-primary filter drop-shadow-[0_0_5px_rgba(139,92,246,0.8)]"
                     )} 
                     strokeWidth={isActive ? 2.5 : 2}
+                    style={{
+                      ...(isActive && !isExpanded ? {
+                        filter: 'drop-shadow(0 0 3px rgba(139, 92, 246, 0.7))',
+                        color: 'var(--primary)',
+                      } : {})
+                    }}
                   />
                   {isExpanded && <span className="ml-3">{item.name}</span>}
                 </Link>
@@ -164,7 +170,11 @@ const Sidebar = () => {
               asChild
             >
               <Link to="/login">
-                <LogOut className="h-5 w-5" />
+                <LogOut className="h-5 w-5" 
+                  style={{
+                    filter: !isExpanded ? 'drop-shadow(0 0 1px rgba(255, 255, 255, 0.5))' : 'none'
+                  }}
+                />
                 {isExpanded && <span className="ml-3">Logout</span>}
               </Link>
             </Button>
