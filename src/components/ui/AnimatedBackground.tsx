@@ -3,7 +3,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 interface AnimatedBackgroundProps {
-  children: React.ReactNode;
+  children?: React.ReactNode; // Make children optional
   className?: string;
 }
 
