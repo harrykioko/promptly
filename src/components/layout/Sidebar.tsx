@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -85,7 +86,7 @@ const Sidebar = () => {
         </button>
 
         <div className="flex flex-col h-full p-4">
-          <div className="py-6 px-4">
+          <div className="py-6 px-4 flex justify-center md:justify-start">
             <Link to="/dashboard" onClick={() => setIsMobileOpen(false)}>
               {isExpanded ? (
                 <GradientText as="h1" className="text-2xl font-bold">Promptly</GradientText>
@@ -106,7 +107,7 @@ const Sidebar = () => {
             ) : (
               <Button className="w-full justify-center bg-gradient hover:shadow-lg p-2" asChild>
                 <Link to="/prompts/new" onClick={() => setIsMobileOpen(false)}>
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-5 w-5" />
                 </Link>
               </Button>
             )}
@@ -131,13 +132,17 @@ const Sidebar = () => {
                 to={item.path}
                 className={cn(
                   "flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+                  !isExpanded && "justify-center",
                   isActiveRoute(item.path)
                     ? "bg-primary/10 text-primary"
                     : "hover:bg-white/10 text-muted-foreground hover:text-foreground"
                 )}
                 onClick={() => setIsMobileOpen(false)}
               >
-                <item.icon className="h-5 w-5 min-w-[20px]" />
+                <item.icon className={cn(
+                  "h-5 w-5",
+                  !isExpanded && "h-6 w-6"
+                )} />
                 {isExpanded && <span className="ml-3">{item.name}</span>}
               </Link>
             ))}
@@ -153,7 +158,10 @@ const Sidebar = () => {
               asChild
             >
               <Link to="/login">
-                <LogOut className="h-5 w-5" />
+                <LogOut className={cn(
+                  "h-5 w-5",
+                  !isExpanded && "h-6 w-6"
+                )} />
                 {isExpanded && <span className="ml-3">Logout</span>}
               </Link>
             </Button>
