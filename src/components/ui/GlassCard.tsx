@@ -12,7 +12,7 @@ const GlassCard = ({ children, className, hoverEffect = true }: GlassCardProps) 
   return (
     <div
       className={cn(
-        "glass rounded-2xl p-6",
+        "bg-white/40 backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-lg",
         hoverEffect && "hover-lift",
         className
       )}
