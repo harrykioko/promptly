@@ -10,6 +10,7 @@ import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import MyPrompts from "./pages/MyPrompts";
+import NewPrompt from "./pages/NewPrompt";
 import Templates from "./pages/Templates";
 import Profile from "./pages/Profile";
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/signup" element={<SignUp />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/prompts" element={<MyPrompts />} />
+          <Route path="/prompts/new" element={<NewPrompt />} />
           <Route path="/templates" element={<Templates />} />
           <Route path="/profile" element={<Profile />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

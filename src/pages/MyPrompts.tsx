@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import PromptCard from '@/components/prompts/PromptCard';
@@ -6,6 +5,7 @@ import { Plus, Filter, Grid3X3, List, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 // Mock data for tags
 const allTags = [
@@ -95,9 +95,11 @@ const MyPrompts = () => {
               Manage and organize all your AI prompts
             </p>
           </div>
-          <Button className="bg-gradient">
-            <Plus className="mr-2 h-4 w-4" />
-            Create New Prompt
+          <Button className="bg-gradient" asChild>
+            <Link to="/prompts/new">
+              <Plus className="mr-2 h-4 w-4" />
+              Create New Prompt
+            </Link>
           </Button>
         </div>
         
