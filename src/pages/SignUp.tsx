@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 import GradientText from '@/components/ui/GradientText';
@@ -9,23 +9,144 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const SignUp = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        navigate('/dashboard');
+      }
+    };
+    
+    checkSession();
+    
+    // Set up auth state change listener
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (session) {
+          navigate('/dashboard');
+        }
+      }
+    );
+    
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [navigate]);
   
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (password.length < 8) {
+      toast({
+        title: "Password Error",
+        description: "Password must be at least 8 characters",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsLoading(true);
     
-    // Simulate sign up process
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Account created",
-        description: "You've successfully created your account! Please check your email for verification.",
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+        },
       });
-    }, 1500);
+      
+      if (error) {
+        toast({
+          title: "Signup failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else if (data.user) {
+        toast({
+          title: "Account created",
+          description: "You've successfully created your account!",
+        });
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      toast({
+        title: "An error occurred",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const handleGoogleSignUp = async () => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+        },
+      });
+      
+      if (error) {
+        toast({
+          title: "Google Sign Up Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "An error occurred",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const handleGithubSignUp = async () => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+        },
+      });
+      
+      if (error) {
+        toast({
+          title: "GitHub Sign Up Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "An error occurred",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -51,7 +172,7 @@ const SignUp = () => {
         </div>
         
         <GlassCard className="mb-4">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleEmailSignup} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">
                 Full Name
@@ -60,6 +181,8 @@ const SignUp = () => {
                 id="name"
                 type="text" 
                 placeholder="Enter your name" 
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
                 required 
               />
             </div>
@@ -72,6 +195,8 @@ const SignUp = () => {
                 id="email"
                 type="email" 
                 placeholder="you@example.com" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required 
               />
             </div>
@@ -84,6 +209,8 @@ const SignUp = () => {
                 id="password"
                 type="password" 
                 placeholder="Create a password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required 
               />
               <p className="text-xs text-muted-foreground">
@@ -110,10 +237,7 @@ const SignUp = () => {
                 type="button" 
                 variant="outline" 
                 disabled={isLoading}
-                onClick={() => toast({
-                  title: "Google Sign Up",
-                  description: "Google authentication will be implemented with Supabase.",
-                })}
+                onClick={handleGoogleSignUp}
               >
                 <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                   <path
@@ -140,10 +264,7 @@ const SignUp = () => {
                 type="button" 
                 variant="outline" 
                 disabled={isLoading}
-                onClick={() => toast({
-                  title: "GitHub Sign Up",
-                  description: "GitHub authentication will be implemented with Supabase.",
-                })}
+                onClick={handleGithubSignUp}
               >
                 <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                   <path
