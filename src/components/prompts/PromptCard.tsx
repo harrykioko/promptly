@@ -4,12 +4,18 @@ import { MoreHorizontal, Copy, Clock, Tag } from 'lucide-react';
 import { Button } from '../ui/button';
 import GlassCard from '../ui/GlassCard';
 import { toast } from "sonner";
+import { cn } from '@/lib/utils';
+
+interface Tag {
+  name: string;
+  color?: string;
+}
 
 interface PromptCardProps {
   id: string;
   title: string;
   content: string;
-  tags: string[];
+  tags: string[] | Tag[];
   lastUpdated: string;
   isFavorite?: boolean;
 }
@@ -27,6 +33,35 @@ const PromptCard = ({
     navigator.clipboard.writeText(content);
     toast.success("Prompt copied to clipboard");
   };
+
+  const getTagDisplay = (tag: string | Tag) => {
+    if (typeof tag === 'string') {
+      // For backward compatibility with existing string tags
+      return (
+        <span 
+          key={tag} 
+          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/20 text-secondary-foreground"
+        >
+          <Tag className="h-3 w-3 mr-1" />
+          {tag}
+        </span>
+      );
+    } else {
+      // For new Tag objects with color
+      return (
+        <span 
+          key={tag.name} 
+          className={cn(
+            "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
+            tag.color || "bg-secondary/20 text-secondary-foreground"
+          )}
+        >
+          <Tag className="h-3 w-3 mr-1" />
+          {tag.name}
+        </span>
+      );
+    }
+  };
   
   return (
     <GlassCard className="hover:shadow-xl transition-all duration-300">
@@ -42,15 +77,7 @@ const PromptCard = ({
       </div>
       
       <div className="flex flex-wrap gap-2 mb-4">
-        {tags.map((tag, index) => (
-          <span 
-            key={index} 
-            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/20 text-secondary-foreground"
-          >
-            <Tag className="h-3 w-3 mr-1" />
-            {tag}
-          </span>
-        ))}
+        {tags.map((tag) => getTagDisplay(tag))}
       </div>
       
       <div className="flex justify-between items-center">

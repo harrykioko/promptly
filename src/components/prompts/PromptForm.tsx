@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Lightbulb, Save } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -11,6 +10,7 @@ import AIPromptSuggestions from './AIPromptSuggestions';
 interface Tag {
   id: string;
   name: string;
+  color?: string;
 }
 
 interface PromptFormProps {
