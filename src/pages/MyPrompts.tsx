@@ -1,81 +1,59 @@
+
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import PromptCard from '@/components/prompts/PromptCard';
-import { Plus, Filter, Grid3X3, List, Search } from 'lucide-react';
+import { Plus, Filter, Grid3X3, List, Search, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
-
-// Mock data for tags
-const allTags = [
-  'typescript', 'react', 'sql', 'api', 'documentation', 
-  'database', 'frontend', 'backend', 'optimization', 'component'
-];
+import { usePrompts } from '@/hooks/use-prompts';
+import { useUser } from '@/hooks/use-user';
 
 const MyPrompts = () => {
+  const { user } = useUser();
+  const { prompts, isLoading, isError } = usePrompts();
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   
-  // Mock data for prompts
-  const prompts = [
-    {
-      id: '1',
-      title: 'React Component Generator',
-      content: 'Create a React functional component with TypeScript typing. Include useState and useEffect hooks as necessary. The component should be responsive and follow best practices.',
-      tags: ['react', 'typescript', 'component'],
-      lastUpdated: '2 hours ago',
-      isFavorite: true
-    },
-    {
-      id: '2',
-      title: 'SQL Query Optimizer',
-      content: 'Analyze the following SQL query and suggest optimizations for better performance. Consider indexing, query structure, and potential alternatives.',
-      tags: ['sql', 'database', 'optimization'],
-      lastUpdated: 'Yesterday',
-      isFavorite: false
-    },
-    {
-      id: '3',
-      title: 'API Documentation Helper',
-      content: 'Generate comprehensive documentation for the following API endpoint. Include request/response examples, error codes, and parameter descriptions.',
-      tags: ['api', 'documentation', 'rest'],
-      lastUpdated: '3 days ago',
-      isFavorite: true
-    },
-    {
-      id: '4',
-      title: 'Code Review Prompt',
-      content: 'Review the following code for potential bugs, performance issues, and adherence to best practices. Suggest improvements and refactoring when appropriate.',
-      tags: ['code-review', 'best-practices'],
-      lastUpdated: '1 week ago',
-      isFavorite: false
-    },
-    {
-      id: '5',
-      title: 'Database Schema Designer',
-      content: 'Help me design a normalized database schema for the following requirements. Consider relationships, indexes, and data types for optimal performance.',
-      tags: ['database', 'schema', 'design'],
-      lastUpdated: '2 weeks ago',
-      isFavorite: false
-    },
-    {
-      id: '6',
-      title: 'CI/CD Pipeline Setup',
-      content: 'Create a CI/CD pipeline configuration for a Node.js application using GitHub Actions. Include testing, building, and deployment steps.',
-      tags: ['ci-cd', 'github-actions', 'devops'],
-      lastUpdated: '3 weeks ago',
-      isFavorite: true
-    }
-  ];
-  
-  // Filter prompts based on selected tags
-  const filteredPrompts = selectedTags.length > 0
-    ? prompts.filter(prompt => 
-        prompt.tags.some(tag => selectedTags.includes(tag))
-      )
-    : prompts;
+  // Extract all unique tags from prompts
+  const allTags = React.useMemo(() => {
+    if (!prompts) return [];
     
+    const tagSet = new Set<string>();
+    prompts.forEach(prompt => {
+      if (prompt.tags) {
+        prompt.tags.forEach(tag => tagSet.add(tag));
+      }
+    });
+    
+    return Array.from(tagSet);
+  }, [prompts]);
+  
+  // Filter prompts based on selected tags and search term
+  const filteredPrompts = React.useMemo(() => {
+    if (!prompts) return [];
+    
+    let filtered = prompts;
+    
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(prompt => 
+        prompt.title.toLowerCase().includes(term) || 
+        prompt.content.toLowerCase().includes(term)
+      );
+    }
+    
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter(prompt => 
+        prompt.tags && prompt.tags.some(tag => selectedTags.includes(tag))
+      );
+    }
+    
+    return filtered;
+  }, [prompts, selectedTags, searchTerm]);
+  
   const toggleTag = (tag: string) => {
     setSelectedTags(prev => 
       prev.includes(tag) 
@@ -110,6 +88,8 @@ const MyPrompts = () => {
             <Input 
               placeholder="Search prompts..." 
               className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           
@@ -135,41 +115,69 @@ const MyPrompts = () => {
         </div>
         
         {/* Tags */}
-        <div className="flex flex-wrap gap-2">
-          {allTags.map(tag => (
-            <button
-              key={tag}
-              className={cn(
-                "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors",
-                selectedTags.includes(tag)
-                  ? "bg-primary text-white"
-                  : "bg-muted hover:bg-muted/80 text-foreground"
-              )}
-              onClick={() => toggleTag(tag)}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
+        {allTags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {allTags.map(tag => (
+              <button
+                key={tag}
+                className={cn(
+                  "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors",
+                  selectedTags.includes(tag)
+                    ? "bg-primary text-white"
+                    : "bg-muted hover:bg-muted/80 text-foreground"
+                )}
+                onClick={() => toggleTag(tag)}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
         
-        {/* Prompts Grid/List */}
-        <div className={cn(
-          view === 'grid' 
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 
-            : "space-y-4"
-        )}>
-          {filteredPrompts.map(prompt => (
-            <PromptCard 
-              key={prompt.id}
-              id={prompt.id}
-              title={prompt.title}
-              content={prompt.content}
-              tags={prompt.tags}
-              lastUpdated={prompt.lastUpdated}
-              isFavorite={prompt.isFavorite}
-            />
-          ))}
-        </div>
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="py-12 flex flex-col items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mb-4" />
+            <p className="text-muted-foreground">Loading your prompts...</p>
+          </div>
+        ) : isError ? (
+          <div className="p-4 bg-red-100 rounded-md text-red-700">
+            Error loading prompts. Please try again later.
+          </div>
+        ) : filteredPrompts.length === 0 ? (
+          <div className="py-12 text-center">
+            <p className="text-muted-foreground mb-4">
+              {searchTerm || selectedTags.length > 0 
+                ? "No prompts match your search criteria" 
+                : "You don't have any prompts yet"}
+            </p>
+            <Button className="bg-gradient" asChild>
+              <Link to="/prompts/new">
+                <Plus className="mr-2 h-4 w-4" />
+                Create Your First Prompt
+              </Link>
+            </Button>
+          </div>
+        ) : (
+          /* Prompts Grid/List */
+          <div className={cn(
+            view === 'grid' 
+              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 
+              : "space-y-4"
+          )}>
+            {filteredPrompts.map(prompt => (
+              <PromptCard 
+                key={prompt.id}
+                id={prompt.id}
+                title={prompt.title}
+                content={prompt.content}
+                tags={prompt.tags || []}
+                lastUpdated={new Date(prompt.updated_at || prompt.created_at || '').toLocaleDateString()}
+                isFavorite={false} // Need to implement favorites functionality
+              />
+            ))}
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

@@ -11,6 +11,13 @@ interface StatCardProps {
   trend?: 'up' | 'down' | 'neutral';
 }
 
+interface DashboardStatsProps {
+  totalPrompts: number;
+  templates: number;
+  favorites: number;
+  usage: string;
+}
+
 const StatCard = ({ title, value, icon: Icon, change, trend }: StatCardProps) => {
   return (
     <GlassCard className="flex items-center">
@@ -36,34 +43,39 @@ const StatCard = ({ title, value, icon: Icon, change, trend }: StatCardProps) =>
   );
 };
 
-const DashboardStats = () => {
+const DashboardStats = ({ 
+  totalPrompts = 0, 
+  templates = 0, 
+  favorites = 0, 
+  usage = '0%' 
+}: DashboardStatsProps) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatCard 
         title="Total Prompts" 
-        value={42} 
+        value={totalPrompts} 
         icon={FileText} 
-        change="+5 this week" 
-        trend="up" 
+        change={totalPrompts > 0 ? `+${Math.min(totalPrompts, 5)} this week` : undefined}
+        trend={totalPrompts > 0 ? 'up' : 'neutral'} 
       />
       <StatCard 
         title="Templates" 
-        value={8} 
+        value={templates} 
         icon={Layers} 
-        change="+2 this week" 
-        trend="up" 
+        change={templates > 0 ? `+${Math.min(templates, 2)} this week` : undefined}
+        trend={templates > 0 ? 'up' : 'neutral'} 
       />
       <StatCard 
         title="Favorites" 
-        value={12} 
+        value={favorites} 
         icon={Star} 
       />
       <StatCard 
         title="Usage" 
-        value="86%" 
+        value={usage} 
         icon={Activity} 
-        change="+12% from last month" 
-        trend="up" 
+        change={usage !== '0%' ? "+12% from last month" : undefined}
+        trend={usage !== '0%' ? 'up' : 'neutral'} 
       />
     </div>
   );
