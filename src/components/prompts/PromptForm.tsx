@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, HelpCircle, Lightbulb, MessageSquarePlus, Save } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -19,6 +18,7 @@ interface PromptFormProps {
     content: string;
     tags: string[];
   }) => void;
+  onCancel?: () => void;
   initialData?: {
     title: string;
     content: string;
@@ -26,7 +26,7 @@ interface PromptFormProps {
   };
 }
 
-const PromptForm = ({ onSave, initialData }: PromptFormProps) => {
+const PromptForm = ({ onSave, onCancel, initialData }: PromptFormProps) => {
   const [title, setTitle] = useState(initialData?.title || '');
   const [content, setContent] = useState(initialData?.content || '');
   const [tags, setTags] = useState<Tag[]>(
@@ -35,7 +35,6 @@ const PromptForm = ({ onSave, initialData }: PromptFormProps) => {
   const [tagInput, setTagInput] = useState('');
   const [showAiSuggestion, setShowAiSuggestion] = useState(false);
   
-  // Mock AI suggestions
   const aiSuggestions = {
     promptTitle: "Try to make your title clear and descriptive of the task you want AI to perform",
     promptContent: "Include specific instructions and context. Consider adding examples of desired output format.",
@@ -275,7 +274,13 @@ const PromptForm = ({ onSave, initialData }: PromptFormProps) => {
         </div>
       </div>
 
-      <div className="flex justify-end pt-4">
+      <div className="flex justify-end gap-3 pt-4">
+        <Button 
+          variant="outline" 
+          onClick={onCancel}
+        >
+          Cancel
+        </Button>
         <Button onClick={handleSave} className="bg-gradient">
           <Save className="mr-2 h-4 w-4" />
           Save Prompt
@@ -286,3 +291,4 @@ const PromptForm = ({ onSave, initialData }: PromptFormProps) => {
 };
 
 export default PromptForm;
+

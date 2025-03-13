@@ -24,6 +24,10 @@ const NewPrompt = () => {
     navigate('/prompts');
   };
   
+  const handleCancel = () => {
+    navigate('/prompts');
+  };
+  
   return (
     <DashboardLayout title="Create New Prompt">
       <div className="space-y-8 max-w-5xl mx-auto">
@@ -35,7 +39,10 @@ const NewPrompt = () => {
         </div>
         
         <GlassCard>
-          <PromptForm onSave={handleSavePrompt} />
+          <PromptForm 
+            onSave={handleSavePrompt} 
+            onCancel={handleCancel}
+          />
         </GlassCard>
 
         <div className="bg-blue-50/30 border border-blue-100 rounded-xl p-6">
