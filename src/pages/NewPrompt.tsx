@@ -34,7 +34,7 @@ const NewPrompt = () => {
         <div>
           <h1 className="text-3xl font-bold mb-2">Create New Prompt</h1>
           <p className="text-muted-foreground">
-            Design a powerful prompt with AI assistance
+            Design a powerful prompt with AI assistance and preview it before saving
           </p>
         </div>
         

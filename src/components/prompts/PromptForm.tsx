@@ -1,11 +1,13 @@
+
 import React, { useState } from 'react';
-import { Lightbulb, Save } from 'lucide-react';
+import { Lightbulb, Save, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { toast } from 'sonner';
 import FormField from './FormField';
 import TagsManager from './TagsManager';
 import AIPromptSuggestions from './AIPromptSuggestions';
+import PromptPreview from './PromptPreview';
 
 interface Tag {
   id: string;
@@ -34,6 +36,7 @@ const PromptForm = ({ onSave, onCancel, initialData }: PromptFormProps) => {
     initialData?.tags.map((tag, index) => ({ id: `${index}`, name: tag })) || []
   );
   const [showAiSuggestion, setShowAiSuggestion] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   
   const aiSuggestions = {
     promptTitle: "Try to make your title clear and descriptive of the task you want AI to perform",
@@ -66,8 +69,44 @@ const PromptForm = ({ onSave, onCancel, initialData }: PromptFormProps) => {
     setShowAiSuggestion(false);
   };
 
+  const togglePreview = () => {
+    setShowPreview(!showPreview);
+  };
+
   return (
     <div className="space-y-6">
+      <div className="flex justify-end mb-4">
+        <Button 
+          variant="secondary" 
+          size="sm" 
+          onClick={togglePreview}
+          className="flex items-center gap-1"
+        >
+          {showPreview ? (
+            <>
+              <EyeOff className="h-4 w-4" />
+              <span>Hide Preview</span>
+            </>
+          ) : (
+            <>
+              <Eye className="h-4 w-4" />
+              <span>Show Preview</span>
+            </>
+          )}
+        </Button>
+      </div>
+
+      {showPreview && (
+        <div className="mb-8 animate-fade-in">
+          <h2 className="text-lg font-semibold mb-3">Preview</h2>
+          <PromptPreview 
+            title={title} 
+            content={content} 
+            tags={tags} 
+          />
+        </div>
+      )}
+
       <FormField 
         id="prompt-title" 
         label="Prompt Title" 
